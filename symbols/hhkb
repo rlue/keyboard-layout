@@ -1,0 +1,16 @@
+// * Move left Ctrl to CapsLock
+// * Move CapsLock to Escape
+// * Move Escape to Tilde
+// * Move Tilde to left Ctrl
+// * Swap Backspace and Backslash
+partial default
+xkb_symbols "from_us" {
+    replace key  <CAPS> { [ Control_L ] };
+    modifier_map Control { <CAPS> };
+    replace key  <ESC> { [ Caps_Lock ] };
+    modifier_map Lock { <ESC> };
+    replace key  <TLDE> { [ Escape, Escape ] };
+    replace key  <LCTL> { [ grave, asciitilde ] };
+    replace key  <BKSL> { [ BackSpace, BackSpace ] };
+    replace key  <BKSP> { [ backslash, bar ] };
+};

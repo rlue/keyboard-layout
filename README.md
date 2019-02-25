@@ -18,58 +18,48 @@ Keyboard](https://en.wikipedia.org/wiki/Happy_Hacking_Keyboard), where
 - there is no dedicated Caps lock key.
 
 The Happy Hacking and Sun Type 3 keyboards split what is the Backspace
-key on PC keyboards into two—Backslash and Tilde—so I put Tilde
-elsewhere.
+key on PC keyboards into two—Backslash and Tilde—so I moved Tilde
+left Control.
 
 
 ## Installation ##
 
-To install this layout:
+### Automatic ###
 
-```bash
-mv /usr/shareX11/xkb/rules/evdev.lst /usr/shareX11/xkb/rules/evdev.lst.orig
-mv /usr/shareX11/xkb/rules/evdev.xml /usr/shareX11/xkb/rules/evdev.xml.orig
-cp rules/evdev.lst rules/evdev.xml /usr/shareX11/xkb/rules/
-cp symbols/us-unix /usr/shareX11/xkb/symbols/
+```sh
+$ sudo ./install.sh
 ```
 
-To apply this layout on the built-in keyboard of a Dell XPS 13 (9380):
+### Manual ###
 
-```bash
-setxkbmap -layout us-unix -option
-setxkbmap -layout us-unix -option "altwin:swap_alt_win,ctrl:rctrl_ralt"
-```
+1. Copy the custom symbols file to your XKB installation directory:
 
-### i3 ###
+   ```sh
+   $ sudo cp {,/usr/share/X11/xkb/}symbols/hhkb
+   ```
 
-To use in [i3](https://en.wikipedia.org/wiki/I3_(window_manager)), you
-can create a script to set the layout and invoke the script from the
-i3 configuration file.
+2. Register a new option in the appropriate rules file
+   ([`evdev` on Linux; `base` on other \*NIX systems](https://unix.stackexchange.com/a/413429/176219)):
 
-For example, the contents of `~/.local/bin/setkeyboardlayout`:
+   ```sh
+   # /usr/share/X11/xkb/rules/evdev (or base)
 
-```bash
-#!/usr/bin/env bash
+   ! options	=	symbol
+     hhkb:from_us       =       +hhkb(from_us)
+     ...
+   ```
+   
+3. Add an `XKBOPTIONS` entry to your `/etc/default/keyboard` file:
+   
+   ```sh
+   # /etc/default/keyboard
+   
+   # Base configuration
+   XKBOPTIONS="hhkb:from_us"
 
-if setxkbmap -layout us-unix -option &>/dev/null; then
-    setxkbmap -layout us-unix -option "altwin:swap_alt_win,ctrl:rctrl_ralt"
-    exit
-fi
-
-# On a US layout:
-# - Swap Caps lock and left Control
-# - Swap Alt and Super
-# - Make right Control invoke right Alt
-setxkbmap -layout us -option
-setxkbmap -layout us -option "ctrl:swapcaps,altwin:swap_alt_win,ctrl:rctrl_ralt"
-```
-
-Then add this line to `~/.config/i3/config`:
-
-```
-exec --no-startup-id ~/.local/bin/setkeyboardlayout
-```
-
+   # Or, with swapped modifier keys
+   XKBOPTIONS="hhkb:from_us,altwin:swap_alt_win,ctrl:rctrl_ralt"
+   ```
 
 ## Reference ##
 
